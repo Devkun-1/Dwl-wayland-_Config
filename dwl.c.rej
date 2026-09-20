@@ -1,0 +1,42 @@
+--- dwl.c
++++ dwl.c
+@@ -256,10 +257,12 @@ static void chvt(const Arg *arg);
+ static void checkidleinhibitor(struct wlr_surface *exclude);
+ static void cleanup(void);
+ static void cleanupmon(struct wl_listener *listener, void *data);
++static int clientindex(Monitor *m, Client *c);
+ static void closemon(Monitor *m);
+ static void commitlayersurfacenotify(struct wl_listener *listener, void *data);
+ static void commitnotify(struct wl_listener *listener, void *data);
+ static void commitpopup(struct wl_listener *listener, void *data);
++static int countclients(Monitor *m);
+ static void createdecoration(struct wl_listener *listener, void *data);
+ static void createidleinhibitor(struct wl_listener *listener, void *data);
+ static void createkeyboard(struct wlr_keyboard *keyboard);
+@@ -1581,12 +1798,15 @@ focusclient(Client *c, int lift)
+ 		wl_list_insert(&fstack, &c->flink);
+ 		selmon = c->mon;
+ 		c->isurgent = 0;
++		drawuborders(c->mon);
+ 		client_restack_surface(c);
+ 
+ 		/* Don't change border color if there is an exclusive focus or we are
+ 		 * handling a drag operation */
+-		if (!exclusive_focus && !seat->drag)
++		if (!exclusive_focus && !seat->drag) {
+ 			client_set_border_color(c, focuscolor);
++			drawfborders(c->mon);
++		}
+ 	}
+ 
+ 	/* Deactivate old client if focus is changing */
+@@ -1604,7 +1824,8 @@ focusclient(Client *c, int lift)
+ 		 * and probably other clients */
+ 		} else if (old_c && !client_is_unmanaged(old_c) && (!c || !client_wants_focus(c))) {
+ 			client_set_border_color(old_c, bordercolor);
+-
++			if (old_c->mon && (!c || c->mon != old_c->mon))
++				destroyborders(old_c->mon->fborders);
+ 			client_activate_surface(old, 0);
+ 		}
+ 	}

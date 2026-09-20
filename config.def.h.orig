@@ -4,7 +4,8 @@
    ((hex >> 8) & 0xFF) / 255.0f, (hex & 0xFF) / 255.0f}
 /* appearance */
 static const int sloppyfocus = 1; /* focus follows mouse */
-static const int bypass_surface_visibility = 0; /* 1 means idle inhibitors will disable idle tracking even if it's
+static const int bypass_surface_visibility =
+    0; /* 1 means idle inhibitors will disable idle tracking even if it's
           surface isn't visible  */
 static const unsigned int borderpx = 1; /* border pixel of windows */
 static const unsigned int snap = 32;    /* snap pixel */
@@ -22,14 +23,6 @@ static const float fullscreen_bg[] = {0.0f, 0.0f, 0.0f,
 
 /* logging */
 static int log_level = WLR_ERROR;
-
-/* Autostart */
-static const char *const autostart[] = {
-    "dunst", "&", NULL, 
-    "swaybg", "-i", "/home/kun/Pictures/Wallpapers/wall2.jpg", NULL,
-    // "wbg", "/path/to/your/image", NULL,
-    NULL /* terminate */
-};
 
 static const Rule rules[] = {
     /* app_id             title       tags mask     isfloating   monitor */
@@ -64,9 +57,11 @@ static const MonitorRule monrules[] = {
 
 /* keyboard */
 static const struct xkb_rule_names xkb_rules = {
-    .model = "pc105",
-    .layout = "us,th", // Replace with your language codes (e.g., us and th for Thai)
-    .options = "grp:alt_shift_toggle", // Or another toggle like "grp:win_space_toggle"
+    /* can specify fields: rules, model, layout, variant, options */
+    /* example:
+    .options = "ctrl:nocaps",
+    */
+    .options = NULL,
 };
 
 static const int repeat_rate = 25;
@@ -139,40 +134,21 @@ static const enum libinput_config_tap_button_map button_map =
 
 /* commands */
 static const char *termcmd[] = {"alacritty", NULL};
-static const char *menucmd[] = {
-"wmenu-run", 
-"-f", "MartianMono Nerd Font 16",
-"-l" "10",
-NULL
-};
-
-// screenshot
-static const char *screenshotfull[] = {"/home/kun/.config/dwl/scripts/screenshot.sh", "full", NULL};
-static const char *screenshotarea[] = {"/home/kun/.config/dwl/scripts/screenshot.sh", "area", NULL};
-
-// volume
-static const char *volup[] = {"/home/kun/.config/dwl/scripts/volume.sh", "up", NULL};
-static const char *voldown[] = {"/home/kun/.config/dwl/scripts/volume.sh", "down", NULL};
-static const char *volmute[] = {"/home/kun/.config/dwl/scripts/volume.sh", "mute", NULL};
-
-// brightness
-static const char *brighup[] = {"/home/kun/.config/dwl/scripts/brightness.sh", "up", NULL};
-static const char *brighdown[] = {"/home/kun/.config/dwl/scripts/brightness.sh", "down", NULL};
-
+static const char *menucmd[] = {"wmenu-run", NULL};
 
 static const Key keys[] = {
     /* modifier                  key                  function argument */
     {MODKEY, XKB_KEY_p, spawn, {.v = menucmd}},
-    {MODKEY, XKB_KEY_Return, spawn, {.v = termcmd}},
-    {MODKEY, XKB_KEY_h, focusstack, {.i = +1}},
-    {MODKEY, XKB_KEY_l, focusstack, {.i = -1}},
+    {MODKEY | WLR_MODIFIER_SHIFT, XKB_KEY_Return, spawn, {.v = termcmd}},
+    {MODKEY, XKB_KEY_j, focusstack, {.i = +1}},
+    {MODKEY, XKB_KEY_k, focusstack, {.i = -1}},
     {MODKEY, XKB_KEY_i, incnmaster, {.i = +1}},
     {MODKEY, XKB_KEY_d, incnmaster, {.i = -1}},
-    {MODKEY, XKB_KEY_j, setmfact, {.f = -0.05f}},
-    {MODKEY, XKB_KEY_k, setmfact, {.f = +0.05f}},
-    {MODKEY| WLR_MODIFIER_SHIFT, XKB_KEY_Return, zoom, {0}},
+    {MODKEY, XKB_KEY_h, setmfact, {.f = -0.05f}},
+    {MODKEY, XKB_KEY_l, setmfact, {.f = +0.05f}},
+    {MODKEY, XKB_KEY_Return, zoom, {0}},
     {MODKEY, XKB_KEY_Tab, view, {0}},
-    {MODKEY, XKB_KEY_q, killclient, {0}},
+    {MODKEY | WLR_MODIFIER_SHIFT, XKB_KEY_c, killclient, {0}},
     {MODKEY, XKB_KEY_t, setlayout, {.v = &layouts[0]}},
     {MODKEY, XKB_KEY_f, setlayout, {.v = &layouts[1]}},
     {MODKEY, XKB_KEY_m, setlayout, {.v = &layouts[2]}},
@@ -201,19 +177,6 @@ static const Key keys[] = {
     TAGKEYS(XKB_KEY_8, 7),
     TAGKEYS(XKB_KEY_9, 8),
     {MODKEY | WLR_MODIFIER_SHIFT, XKB_KEY_q, quit, {0}},
-
-
-    { 0,      XKB_KEY_Print, spawn, {.v = screenshotfull} },
-    { MODKEY, XKB_KEY_Print, spawn, {.v = screenshotarea} },
-
-    // volume
-    { 0, XKB_KEY_XF86AudioRaiseVolume, spawn, {.v = volup} },
-    { 0, XKB_KEY_XF86AudioLowerVolume, spawn, {.v = voldown} },
-    { 0, XKB_KEY_XF86AudioMute,        spawn, {.v = volmute} }, 
-
-    //brightness
-    { 0, XKB_KEY_XF86MonBrightnessUp,   spawn, {.v = brighup} },
-    { 0, XKB_KEY_XF86MonBrightnessDown, spawn, {.v = brighdown} },
 
     /* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
     {WLR_MODIFIER_CTRL | WLR_MODIFIER_ALT, XKB_KEY_BackSpace, quit, {0}},
