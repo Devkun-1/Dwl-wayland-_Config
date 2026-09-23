@@ -29,6 +29,9 @@ dwl: dwl.c client.h config.h ime.h util.h config.mk cursor-shape-v1-protocol.h \
 WAYLAND_SCANNER   = `$(PKG_CONFIG) --variable=wayland_scanner wayland-scanner`
 WAYLAND_PROTOCOLS = `$(PKG_CONFIG) --variable=pkgdatadir wayland-protocols`
 
+XWAYLAND = -DXWAYLAND
+
+
 cursor-shape-v1-protocol.h:
 	$(WAYLAND_SCANNER) enum-header \
 		$(WAYLAND_PROTOCOLS)/staging/cursor-shape/cursor-shape-v1.xml $@

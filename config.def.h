@@ -159,10 +159,17 @@ static const char *volmute[] = {"/home/kun/.config/dwl/scripts/volume.sh", "mute
 static const char *brighup[] = {"/home/kun/.config/dwl/scripts/brightness.sh", "up", NULL};
 static const char *brighdown[] = {"/home/kun/.config/dwl/scripts/brightness.sh", "down", NULL};
 
+// clipboard
+static const char *clipcmd[] = { "sh", "-c", "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy", NULL};
+
+// emoji picker
+static const char *rofiemoji[] = { "rofi", "-show", "emoji", "-modi", "emoji", NULL};
 
 static const Key keys[] = {
     /* modifier                  key                  function argument */
     {MODKEY, XKB_KEY_p, spawn, {.v = menucmd}},
+    {MODKEY| WLR_MODIFIER_SHIFT, XKB_KEY_p, spawn, {.v = clipcmd}},
+    {MODKEY| WLR_MODIFIER_SHIFT, XKB_KEY_e, spawn, {.v = rofiemoji}},
     {MODKEY, XKB_KEY_Return, spawn, {.v = termcmd}},
     {MODKEY, XKB_KEY_h, focusstack, {.i = +1}},
     {MODKEY, XKB_KEY_l, focusstack, {.i = -1}},
